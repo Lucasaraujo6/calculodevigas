@@ -9,8 +9,9 @@ public class Vigas {
     private ArrayList<String> saida = new ArrayList<String>();
     private BasicConsole tela = new BasicConsole();
     private int tamanhoMax;
-    private int contador = 0;
-    private int espelho = 0;
+    private int qntdMinima, contador = 0;
+    private double margem, espelho;
+    private String temp;
 
 
     public Vigas(){
@@ -22,26 +23,47 @@ public class Vigas {
         verificarDuplas();
         // verificarTrios();
         // verificarQuadras();
+        tela.listar(saida);
     }
 
+            //50 0 50 10 30 10 20 5 10 3 40 2
 
     public void verificarDuplas(){
-        System.out.println(contador);
+      //  System.out.println(contador);
+        int i = contador-1;
+        int j = 0;
+        while (medidas.get(i)>tamanhoMax/2){
+            espelho = tamanhoMax-medidas.get(i);
+            if(medidas.get(j)>espelho){
+                i--;
+            }else if (medidas.get(j)<espelho){
+                j++;
+            }else if (medidas.get(j)==espelho){
+                qntdMinima = Math.min(quantidades.get(i), quantidades.get(j));
+                quantidades.set(i,quantidades.get(i)-qntdMinima);
+                quantidades.set(j,quantidades.get(j)-qntdMinima);
+                temp = ""+medidas.get(i)+", "+medidas.get(j)+" => "+ qntdMinima +" par(es);";
+                saida.add(temp);
+                i--;
+                
+            }  
+        }
     }
 
     public void removeExtrems(){
         if (medidas.get(contador-1)==tamanhoMax && quantidades.get(contador-1)>0){
-            String temp = ""+medidas.get(contador-1)+quantidades.get(contador-1);
+            contador--;
+            temp = ""+medidas.get(contador)+", 0 => "+quantidades.get(contador)+" pares;";
             saida.add(temp);
-            medidas.remove(contador-1);
-            quantidades.remove(contador-1);
+            medidas.remove(contador);
+            quantidades.remove(contador);
         }
     }
 
 
     /** Adiciona novos valores e organiza em ordem crescrente automaticamente */
     public void addPieces(){
-        while(contador<3){
+        while(contador<5){
             contador++;
             int j=contador;
             medidas.add(tela.askDouble("qual a medida "+contador+"? "));
@@ -57,6 +79,7 @@ public class Vigas {
                 quantidades.set(j-1,qntdTemp);
                 j--;
             }
+
             if(j>=2 && medidas.get(j-1).equals(medidas.get(j-2))){  // mescla quantidades de medidas iguais e reordena o vetor
                 int soma = quantidades.get(j-1)+quantidades.get(j-2);
                 tela.showLnMsg("Valor da soma: "+soma);
@@ -74,5 +97,6 @@ public class Vigas {
 
     public void colectMaxSize(){
         tamanhoMax=tela.askInt("Qual o tamanho máximo? ");
+        margem = tela.askDouble("Qual a margem? ");
     }
 }
